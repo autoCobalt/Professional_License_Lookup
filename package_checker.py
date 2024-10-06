@@ -24,6 +24,4 @@ def check_and_install_packages(modules: str) -> None:
         print("Installing missing libraries...")
         for package in missing:
             _install(package)
-        print("All required packages have been installed.")
-    else:
-        print("All required packages are already installed.")
+        print("All required packages have been installed. Continuing...")
