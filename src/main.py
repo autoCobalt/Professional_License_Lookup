@@ -3,7 +3,7 @@ check_and_install_packages({'requests', 'bs4', 'pandas', 'openpyxl'})
 
 
 def main():
-    print("this works!")
+    print("Hello, world!")
 
 
 if __name__ == '__main__':
