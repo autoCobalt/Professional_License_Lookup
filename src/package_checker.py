@@ -3,15 +3,15 @@ import subprocess
 import importlib
 from typing import Set, Final
 
-def _install(package: str) -> None:
+def __install(package: str) -> None:
     try:
-        print(f"<<<<installing: {package}>>>>")
+        print(f"<<<<<< installing: {package} >>>>>>")
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
     except subprocess.CalledProcessError:
         print(f"Failed to install {package}. You might need to run this script with administrator privileges.")
         sys.exit(1)
 
-def _is_package_installed(package_name: str) -> bool:
+def __is_package_installed(package_name: str) -> bool:
     try:
         importlib.import_module(package_name)
         return True   
@@ -19,10 +19,10 @@ def _is_package_installed(package_name: str) -> bool:
         return False
 
 def check_and_install_packages(modules: str) -> None:
-    missing: Set[str] = {package for package in modules if not _is_package_installed(package)}
+    missing: Set[str] = {package for package in modules if not __is_package_installed(package)}
 
     if missing:
         print(f"Installing missing libraries... {missing}")
         for package in missing:
-            _install(package)
-        print("<<<<All required packages have been installed. Continuing...>>>>")
+            __install(package)
+        print("<<<<<< All required packages have been installed. Continuing... >>>>>>")

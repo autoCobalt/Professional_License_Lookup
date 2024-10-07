@@ -7,11 +7,11 @@ from bs4 import BeautifulSoup
 
 
 
-class LicenseType_Site(Enum):
+class License_Site(Enum):
     
-    IEMA: str = "https://public.iema.state.il.us/iema/radiation/radtech/radtechsearch.asp"
+    IEMA:            str = "https://public.iema.state.il.us/iema/radiation/radtech/radtechsearch.asp"
     PHARM_RN_SOCIAL: str = None # Professional Licensing site has to be dynamically determined: resource_id changes monthly
-    EMT: str = "https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx"
+    EMT:             str = "https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx"
 
 
 
@@ -19,12 +19,12 @@ class LicenseType_Site(Enum):
     def value(self):
         # Determine resource_id for professional licensing site.
         if self.name == 'PHARM_RN_SOCIAL':
-            return LicenseType_Site.__get_resource_id("https://data.illinois.gov/dataset/professional-licensing", "https://data.illinois.gov/api/3/action/datastore_search")
+            return License_Site.__get_resource_id("https://data.illinois.gov/dataset/professional-licensing", "https://data.illinois.gov/api/3/action/datastore_search")
         return super().value
 
     @staticmethod
     def get_vals() -> List[str]:
-        return [col.value for col in LicenseType_Site]
+        return [col.value for col in License_Site]
 
     @staticmethod
     def __get_webpage_content(url: str) -> Optional[str]:
@@ -63,16 +63,16 @@ class LicenseType_Site(Enum):
     # called at runtime to determine the resource_id of the professional license database.
     @staticmethod
     def __get_resource_id(url: str, base_url: str) -> Optional[str]:
-        html_content = LicenseType_Site.__get_webpage_content(url)
+        html_content = License_Site.__get_webpage_content(url)
     
         if not html_content:
             logging.error("Failed to retrieve webpage content.")
             return None
     
         methods = [
-            ("BeautifulSoup", LicenseType_Site.__method_1_beautifulsoup),
-            ("Regex", LicenseType_Site.__method_2_regex),
-            ("JavaScript", LicenseType_Site.__method_3_javascript)
+            ("BeautifulSoup", License_Site.__method_1_beautifulsoup),
+            ("Regex", License_Site.__method_2_regex),
+            ("JavaScript", License_Site.__method_3_javascript)
         ]
     
         for method_name, method_func in methods:
