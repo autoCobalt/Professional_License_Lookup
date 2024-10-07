@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Final, Optional, List
+from typing import Optional, List
 import logging
 import re
 import requests
@@ -13,11 +13,13 @@ class LicenseType_Site(Enum):
     PHARM_RN_SOCIAL: str = None # Professional Licensing site has to be dynamically determined: resource_id changes monthly
     EMT: str = "https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx"
 
+
+
     @property
     def value(self):
         # Determine resource_id for professional licensing site.
         if self.name == 'PHARM_RN_SOCIAL':
-            return LicenseType_Site.__get_resource_id("https://data.illinois.gov/dataset/professional-licensing")
+            return LicenseType_Site.__get_resource_id("https://data.illinois.gov/dataset/professional-licensing", "https://data.illinois.gov/api/3/action/datastore_search")
         return super().value
 
     @staticmethod
@@ -58,8 +60,9 @@ class LicenseType_Site(Enum):
             return match.group(1)
         return None
 
+    # called at runtime to determine the resource_id of the professional license database.
     @staticmethod
-    def __get_resource_id(url: str) -> Optional[str]:
+    def __get_resource_id(url: str, base_url: str) -> Optional[str]:
         html_content = LicenseType_Site.__get_webpage_content(url)
     
         if not html_content:
@@ -75,7 +78,7 @@ class LicenseType_Site(Enum):
         for method_name, method_func in methods:
             resource_id = method_func(html_content)
             if resource_id:
-                return f"{url}?resource_id={resource_id}"
+                return f"{base_url}?resource_id={resource_id}"
             else:
                 logging.warning(f"{method_name} method failed to extract resource ID.")
     
