@@ -1,8 +1,9 @@
 from enum import Enum
-from typing import Optional, List
 import logging
+import os
 import re
 import requests
+from typing import Optional, List
 from bs4 import BeautifulSoup
 
 
@@ -84,3 +85,10 @@ class License_Site(Enum):
     
         logging.error("All methods failed to extract the resource ID.")
         return None
+
+# No current use case as a standalone script.
+def main():
+    print(f"{os.path.basename(__file__)} is not a standalone script.")
+
+if __name__ == '__main__':
+    main()
