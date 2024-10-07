@@ -1,7 +1,7 @@
 import sys
 import subprocess
 import importlib
-from typing import Set, Final
+from typing import Set
 
 def __install(package: str) -> None:
     try:

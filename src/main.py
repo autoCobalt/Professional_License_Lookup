@@ -4,7 +4,7 @@ from constants import License_Site
 
 def main():
     print("this works!")
-    print(License_Site.get_vals())
+    print(*License_Site.get_vals(), sep='\n')
 
 
 if __name__ == '__main__':
