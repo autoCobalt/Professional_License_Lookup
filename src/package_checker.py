@@ -5,6 +5,7 @@ from typing import Set, Final
 
 def _install(package: str) -> None:
     try:
+        print(f"<<<<installing: {package}>>>>")
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
     except subprocess.CalledProcessError:
         print(f"Failed to install {package}. You might need to run this script with administrator privileges.")
@@ -21,7 +22,7 @@ def check_and_install_packages(modules: str) -> None:
     missing: Set[str] = {package for package in modules if not _is_package_installed(package)}
 
     if missing:
-        print("Installing missing libraries...")
+        print(f"Installing missing libraries... {missing}")
         for package in missing:
             _install(package)
-        print("All required packages have been installed. Continuing...")
+        print("<<<<All required packages have been installed. Continuing...>>>>")
