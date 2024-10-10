@@ -20,7 +20,6 @@ class License_Site(Enum):
     def __new__(cls, lic_type: List[str], url: str, params: Union[Dict[str, str], None]):
        obj = object.__new__(cls)
        obj._value_ = (lic_type, url, params)
-       print(type(obj))
        return obj
 
     @property
