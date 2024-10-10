@@ -16,7 +16,7 @@ def search_iema(first_name: str, last_name: str) -> Optional[List]:
 def main() -> None:
     print("testing...")
     for site in License_Site:
-        print('\n',site.name, site.url, site.params,site.value, sep='\n')
+        print('\n',site.name, site.license_types,site.url, site.params,site.value, sep='\n')
 
 if __name__ == '__main__':
     main()

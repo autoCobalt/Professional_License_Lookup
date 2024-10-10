@@ -13,23 +13,27 @@ from api_methods import get_website
 
 class License_Site(Enum):
     
-    IEMA:           Tuple[str, Union[Dict[str, str], None]] = ("https://public.iema.state.il.us/iema/radiation/radtech/radtechsearch.asp", None)
-    PHARM_RN_SOCIAL:Tuple[str, Union[Dict[str, str], None]] = ("https://data.illinois.gov/dataset/professional-licensing", None) # Professional Licensing site has to be dynamically determined: resource_id changes monthly
-    EMT:            Tuple[str, Union[Dict[str, str], None]] = ("https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx", None) 
+    IEMA:           Tuple[List[str],str, Union[Dict[str, str], None]] = (["IEMA","IEMA-NM","IEMA-RT"],"https://public.iema.state.il.us/iema/radiation/radtech/radtechsearch.asp", None)
+    PHARM_RN_SOCIAL:Tuple[List[str],str, Union[Dict[str, str], None]] = (["LSW","LCSW","PHARM","PHARMT"],"https://data.illinois.gov/dataset/professional-licensing", None) # Professional Licensing site has to be dynamically determined: resource_id changes monthly
+    EMT:            Tuple[List[str],str, Union[Dict[str, str], None]] = (["EMT"],"https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx", None) 
 
-    def __new__(cls, url: str, params: Union[Dict[str, str], None]):
+    def __new__(cls, lic_type: List[str], url: str, params: Union[Dict[str, str], None]):
        obj = object.__new__(cls)
-       obj._value_ = (url, params)
+       obj._value_ = (lic_type, url, params)
        print(type(obj))
        return obj
 
+    @property
+    def license_types(self) -> List[str]:
+        return self._value_[0]
+
     @property 
     def url(self) -> str:
-        return self._value_[0]
+        return self._value_[1]
 
     @property
     def params(self) -> Dict[str, str]:
-        return self._value_[1] or {}
+        return self._value_[2] or {}
 
     # called at runtime to determine the resource_id of the professional license database.
     @staticmethod
@@ -75,7 +79,7 @@ class License_Site(Enum):
             return match.group(1)
         return None
 
-License_Site.PHARM_RN_SOCIAL._value_ = ("https://data.illinois.gov/api/3/action/datastore_search", {"resource_id": License_Site._get_resource_id("https://data.illinois.gov/api/3/action/datastore_search")})
+License_Site.PHARM_RN_SOCIAL._value_ = (License_Site.PHARM_RN_SOCIAL._value_[0], "https://data.illinois.gov/api/3/action/datastore_search", {"resource_id": License_Site._get_resource_id("https://data.illinois.gov/api/3/action/datastore_search")})
 
 # No current use case as a standalone script.
 def main() -> None:

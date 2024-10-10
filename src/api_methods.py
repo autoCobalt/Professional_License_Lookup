@@ -1,11 +1,17 @@
 import logging
 import os
 import requests
-from typing import Optional
+from typing import Optional, Dict, Union
 
-def get_website(url: str) -> Optional[str]:
+import urllib.parse
+
+def get_website(url: str, params: Union[Dict[str, str], None] = None) -> Optional[str]:
         try:
-            response = requests.get(url)
+            full_url = url
+            if params:
+                encoded_params = urllib.parse.urlencode(params, quote_via = urllib.parse.quote)
+                full_url = f"{url}?{encoded_params}"
+            response = requests.get(full_url)
             response.raise_for_status()
             return response.text
         except requests.RequestException as e:
