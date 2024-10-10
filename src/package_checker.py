@@ -21,15 +21,16 @@ def __is_package_installed(package_name: str) -> bool:
 
 def install_required_libraries(modules: str) -> None:
     missing: Set[str] = {package for package in modules if not __is_package_installed(package)}
-
-    if missing:
-        print(f"Installing missing libraries... {missing}")
-        for package in missing:
-            __install(package)
-        print("<<<<<< All required packages have been installed. Continuing... >>>>>>")
+    if not missing:
+        return
+    
+    print(f"Installing missing libraries... {missing}")
+    for package in missing:
+        __install(package)
+    print("<<<<<< All required packages have been installed. Continuing... >>>>>>\n")
 
 # No current use case as a standalone script.
-def main():
+def main() -> None:
     print(f"{os.path.basename(__file__)} is not a standalone script.")
 
 if __name__ == '__main__':
