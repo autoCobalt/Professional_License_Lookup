@@ -1,14 +1,16 @@
 #1st party pre-installed python libraries
 import json
 import os
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Union
 
 #3rd party libaries
 from constants import License_Site as lic
-from api_methods import get_website, post_website
 from bs4 import BeautifulSoup
 
-def search_iema(first_name: str, last_name: str) -> Optional[List[Dict[str, any]]]:
+#custom modules
+from api_methods import get_website, post_website
+
+def search_iema(first_name: str, last_name: str) -> List[Dict[str, any]]:
     
     query_params = {
         'lastname': last_name,
@@ -22,7 +24,7 @@ def search_iema(first_name: str, last_name: str) -> Optional[List[Dict[str, any]
     if response and response.status_code != 200:
         print(f"Error: {response.status_code}")
         print(f"Caused by searching: {query_params}")
-    else:
+    elif response and response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table', {'class': 'dropdown'})
 
@@ -44,7 +46,7 @@ def search_iema(first_name: str, last_name: str) -> Optional[List[Dict[str, any]
     return records
     
 
-def search_pharm(first_name: Union[str, None] = None, last_name: Union[str, None] = None, city: Union[str, None] = None) -> Optional[List[Dict[str, any]]]:
+def search_pharm(first_name: Union[str, None] = None, last_name: Union[str, None] = None, city: Union[str, None] = None) -> List[Dict[str, any]]:
     query_params = {
         'First Name': first_name.upper() if first_name else None,
         'Last Name': last_name.upper() if last_name else None,
@@ -62,7 +64,7 @@ def search_pharm(first_name: Union[str, None] = None, last_name: Union[str, None
     if response and response.status_code != 200:
         print(f"Error: {response.status_code}")
         print(f"Caused by searching: {query_params}")
-    else:
+    elif response and response.status_code == 200:
         try:
             data = response.json()
             records = data["result"]["records"]
