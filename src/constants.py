@@ -1,11 +1,14 @@
+#1st party pre-installed python libraries
 from enum import Enum
 import logging
 import os
 import re
 from typing import Optional, List, Dict, Tuple, Union
 
+#3rd party libraries
 from bs4 import BeautifulSoup
 
+#custom modules
 from api_methods import get_website
 
 
@@ -13,7 +16,7 @@ from api_methods import get_website
 
 class License_Site(Enum):
     
-    IEMA:           Tuple[List[str],str, Union[Dict[str, str], None]] = (["IEMA","IEMA-NM","IEMA-RT"],"https://public.iema.state.il.us/iema/radiation/radtech/radtechsearch.asp", None)
+    IEMA:           Tuple[List[str],str, Union[Dict[str, str], None]] = (["IEMA","IEMA-NM","IEMA-RT"],"https://public.iema.state.il.us/iema/radiation/radtech/searchdetail.asp", None)
     PHARM_RN_SOCIAL:Tuple[List[str],str, Union[Dict[str, str], None]] = (["LSW","LCSW","PHARM","PHARMT"],"https://data.illinois.gov/dataset/professional-licensing", None) # Professional Licensing site has to be dynamically determined: resource_id changes monthly
     EMT:            Tuple[List[str],str, Union[Dict[str, str], None]] = (["EMT"],"https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx", None) 
 
@@ -38,44 +41,23 @@ class License_Site(Enum):
     @staticmethod
     def _get_resource_id(base_url: str) -> Optional[str]:
         html_content = get_website(License_Site.PHARM_RN_SOCIAL.url)
-    
         if not html_content:
-            logging.error("Failed to retrieve webpage content.")
             return None
 
-        resource_id = License_Site.__method_1_beautifulsoup(html_content)
-        if resource_id:
-            return resource_id
-        else:
-            logging.error("All methods failed to extract the resource ID from {url}")
+        html_content = html_content.text
 
-        return None
-
-
-    @staticmethod
-    def __method_1_beautifulsoup(html_content: str) -> Optional[str]:
-        soup = BeautifulSoup(html_content, 'html.parser')
-        resource_item = soup.find('li', class_= 'resource-item')
+        #method 1 attempt to get resource_id from data-id attribute in the list item with resource-item class
+        resource_item = BeautifulSoup(html_content, 'html.parser').find('li', class_= 'resource-item')
         if resource_item and 'data-id' in resource_item.attrs:
             return resource_item['data-id']
-        else:
-            return License_Site.__method_2_regex(html_content)
-
-    @staticmethod
-    def __method_2_regex(html_content: str) -> Optional[str]:
-        pattern = r'data-id="([a-f0-9-]{36})"'
-        match = re.search(pattern, html_content)
+        
+        #method 2 attempt to get resource_id from anything that has the data-id attribute OR
+        #method 3 attempt to find anything on the page that matches the 36 alpha-numeric UUID for resource_id
+        match = re.search(r'data-id="([a-f0-9-]{36})"', html_content) or re.search(r'\"id\": \"([a-f0-9-]{36})\"', html_content)
         if match:
             return match.group(1)
-        else:
-            return License_Site.__method_3_javascript(html_content)
 
-    @staticmethod
-    def __method_3_javascript(html_content: str) -> Optional[str]:
-        pattern = r'\"id\": \"([a-f0-9-]{36})\"'
-        match = re.search(pattern, html_content)
-        if match:
-            return match.group(1)
+        logging.error("All methods failed to extract the resource ID from {url}")
         return None
 
 License_Site.PHARM_RN_SOCIAL._value_ = (License_Site.PHARM_RN_SOCIAL._value_[0], "https://data.illinois.gov/api/3/action/datastore_search", {"resource_id": License_Site._get_resource_id("https://data.illinois.gov/api/3/action/datastore_search")})
