@@ -12,11 +12,12 @@ def main() -> None:
     
     params = LicenseRecordDict()
     params.first_name = "Divya"
-    params.license_status = "ACTIVE"
+    params.last_name = "Gandhi"
+    params.license_status = "Active"
 
-    json.dumps(search_pharm(params), indent=2)
-    #print(json.dumps(search_iema("Davis"), indent=2))
-    #print(json.dumps(search_iema(license_nbr="500479871"), indent=2))
+    print(json.dumps(search_pharm(params), indent=2))
+    print(json.dumps(search_iema(first_name="Chad",last_name="Davis"), indent=2))
+    print(json.dumps(search_iema(license_nbr="500479871"), indent=2))
     
     #lic = LicenseRecordDict()
     #print(json.dumps(lic, indent=2))
@@ -28,6 +29,7 @@ def main() -> None:
     #lic.description = "pharm"
     #print(lic.description)
     #print(lic["Description"])
+    json.dumps(search_pharm(params), indent=2)
     print("testing end")
 
 if __name__ == '__main__':

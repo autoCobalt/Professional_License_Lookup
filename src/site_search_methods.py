@@ -1,7 +1,6 @@
 #1st party pre-installed python libraries
 import json
-import os
-from typing import Dict, List, Union
+from typing import Dict, List
 
 #3rd party libaries
 from bs4 import BeautifulSoup
@@ -19,7 +18,7 @@ def search_iema(first_name: str = None, last_name: str = None, license_nbr: str 
         'Submit2': 'Submit'
     }
 
-    records: List[Dict[str, any]] = list()
+    records = list()
 
     response = post_website(lic.IEMA.url, query_params)
     if response and response.status_code == 200:
@@ -51,7 +50,7 @@ def search_pharm(search_params: LicenseRecordDict) -> List[Dict[str, any]]:
         "q": dict(search_params)
     }
     
-    records: List[Dict[str, any]] = list()
+    records = list()
     
     response = get_website(lic.PHARM_RN_SOCIAL.url, params)
     if response and response.status_code == 200:
