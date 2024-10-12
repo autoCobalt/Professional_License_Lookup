@@ -11,8 +11,8 @@ import json
 def main() -> None:
 
     print(json.dumps(search_pharm('Divya'), indent=2))
-    print(json.dumps(search_iema('Chad',"Davis"), indent=2))
-
+    print(json.dumps(search_iema("Davis"), indent=2))
+    print(json.dumps(search_iema(license_nbr="500479871"), indent=2))
 
 if __name__ == '__main__':
     main()
