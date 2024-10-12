@@ -4,11 +4,11 @@ import os
 from typing import Dict, List, Union
 
 #3rd party libaries
-from constants import License_Site as lic
 from bs4 import BeautifulSoup
 
 #custom modules
 from api_methods import get_website, post_website
+from field_definitions import License_Site as lic, LicenseRecordDict
 
 def search_iema(first_name: str = None, last_name: str = None, license_nbr: str = None) -> List[Dict[str, any]]:
     
@@ -45,16 +45,10 @@ def search_iema(first_name: str = None, last_name: str = None, license_nbr: str 
     return records
     
 
-def search_pharm(first_name: Union[str, None] = None, last_name: Union[str, None] = None, city: Union[str, None] = None) -> List[Dict[str, any]]:
-    query_params = {
-        'First Name': first_name.upper() if first_name else None,
-        'Last Name': last_name.upper() if last_name else None,
-        'City': city.upper() if city else None,
-        'License Status': 'ACTIVE'
-    }
+def search_pharm(search_params: LicenseRecordDict) -> List[Dict[str, any]]:
     params = {
         **lic.PHARM_RN_SOCIAL.params,
-        "q": query_params
+        "q": dict(search_params)
     }
     
     records: List[Dict[str, any]] = list()
@@ -65,17 +59,9 @@ def search_pharm(first_name: Union[str, None] = None, last_name: Union[str, None
             data = response.json()
             records = data["result"]["records"]
             if not records:
-                print(f"No records found for: {query_params}")
+                print(f"No records found for: {search_params}")
         except json.JSONDecodeError as e:
             print(f"JSON decode error: {e}")
             print(f"Response content: {response.text}")
 
     return records
-    
-
-# No current use case as a standalone script.
-def main():
-    print(f"{os.path.basename(__file__)} is not a standalone script.")
-
-if __name__ == '__main__':
-    main()

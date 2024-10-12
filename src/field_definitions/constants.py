@@ -11,9 +11,6 @@ from bs4 import BeautifulSoup
 #custom modules
 from api_methods import get_website
 
-
-
-
 class License_Site(Enum):
     
     IEMA:           Tuple[List[str],str, Union[Dict[str, str], None]] = (["IEMA","IEMA-NM","IEMA-RT"],"https://public.iema.state.il.us/iema/radiation/radtech/searchdetail.asp", None)
@@ -61,10 +58,3 @@ class License_Site(Enum):
         return None
 
 License_Site.PHARM_RN_SOCIAL._value_ = (License_Site.PHARM_RN_SOCIAL._value_[0], "https://data.illinois.gov/api/3/action/datastore_search", {"resource_id": License_Site._get_resource_id("https://data.illinois.gov/api/3/action/datastore_search")})
-
-# No current use case as a standalone script.
-def main() -> None:
-    print(f"{os.path.basename(__file__)} is not a standalone script.")
-
-if __name__ == '__main__':
-    main()

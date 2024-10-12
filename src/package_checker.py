@@ -28,10 +28,3 @@ def install_required_libraries(modules: str) -> None:
     for package in missing:
         __install(package)
     print("<<<<<< All required packages have been installed. Continuing... >>>>>>\n")
-
-# No current use case as a standalone script.
-def main() -> None:
-    print(f"{os.path.basename(__file__)} is not a standalone script.")
-
-if __name__ == '__main__':
-    main()

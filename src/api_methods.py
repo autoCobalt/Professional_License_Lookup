@@ -14,6 +14,7 @@ def get_website(url: str, search_params: Union[Dict[str, str], None] = None) -> 
     
     if filtered_params and filtered_params['q'] and type(filtered_params['q']) is dict:
         filtered_params['q'] = json.dumps({k: v for k, v in filtered_params['q'].items() if v})
+        print(filtered_params)
     return __check_status(requests.get(url, params=filtered_params), search_params)
 
 def post_website(url: str, post_params: Union[Dict[str, str], None] = None) -> requests.Response:
@@ -33,11 +34,3 @@ def __check_status(req_response: requests.Response, params: Union[Dict[str, str]
         logging.error(f"Response content: {req_response.text}")
         
     return req_response
-    
-
-# No current use case as a standalone script.
-def main():
-    print(f"{os.path.basename(__file__)} is not a standalone script.")
-
-if __name__ == '__main__':
-    main()

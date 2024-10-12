@@ -8,21 +8,27 @@ from field_definitions import LicenseRecordDict
 import json
 
 def main() -> None:
+    print("testing start")
+    
+    params = LicenseRecordDict()
+    params.first_name = "Divya"
+    params.license_status = "ACTIVE"
 
-    #print(json.dumps(search_pharm('Divya'), indent=2))
+    json.dumps(search_pharm(params), indent=2)
     #print(json.dumps(search_iema("Davis"), indent=2))
     #print(json.dumps(search_iema(license_nbr="500479871"), indent=2))
-    print("testing blank")
-    lic = LicenseRecordDict()
-    print(json.dumps(lic, indent=2))
-    print(lic.get_empty_dict())
-    print(lic.get_fields())
+    
+    #lic = LicenseRecordDict()
+    #print(json.dumps(lic, indent=2))
+    #print(lic.get_empty_dict())
+    #print(lic.get_fields())
     
     
-    lic["Description"] = "pharmzzz"
-    lic.description = "pharm"
-    print(lic.description)
-    print(lic["Description"])
+    #lic["Description"] = "pharmzzz"
+    #lic.description = "pharm"
+    #print(lic.description)
+    #print(lic["Description"])
+    print("testing end")
 
 if __name__ == '__main__':
     main()
