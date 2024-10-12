@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 #custom modules
 from api_methods import get_website, post_website
-from field_definitions import License_Site as lic, LicenseRecordDict
+from field_definitions import License_Site as lic, PharmRnSocialRecordDict
 
 def search_iema(first_name: str = None, last_name: str = None, license_nbr: str = None) -> List[Dict[str, any]]:
     
@@ -42,9 +42,8 @@ def search_iema(first_name: str = None, last_name: str = None, license_nbr: str 
                 records.append(record)
 
     return records
-    
 
-def search_pharm(search_params: LicenseRecordDict) -> List[Dict[str, any]]:
+def search_pharm(search_params: PharmRnSocialRecordDict) -> List[Dict[str, any]]:
     params = {
         **lic.PHARM_RN_SOCIAL.params,
         "q": dict(search_params)

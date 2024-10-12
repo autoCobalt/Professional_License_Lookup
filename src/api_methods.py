@@ -1,7 +1,7 @@
 #1st party pre-installed libraries
 import json
 import logging
-from typing import Dict, Union, List
+from typing import Dict
 from functools import wraps
 
 #3rd party libraries *from the requests installation*
