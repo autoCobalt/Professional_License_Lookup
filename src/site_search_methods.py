@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 #custom modules
 from api_methods import get_website, post_website
-from field_definitions import License_Site as lic, PharmRnSocialRecordDict
+from field_definitions import License_Site as lic, PharmRnSocialRecordDict, IemaLicenseRecordDict
 
 def search_iema(first_name: str = None, last_name: str = None, license_nbr: str = None) -> List[Dict[str, any]]:
     
@@ -22,23 +22,13 @@ def search_iema(first_name: str = None, last_name: str = None, license_nbr: str 
 
     response = post_website(lic.IEMA.url, query_params)
     if response and response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        table = soup.find('table', {'class': 'dropdown'})
+        table = BeautifulSoup(response.text, 'html.parser').find('table', {'class': 'dropdown'})
 
         if table:
             rows = table.find_all('tr')[1:]
-            headers =  table.find_all('th')
-            k_values = list()
-            for header in headers:
-                k_values.append(header.text.strip())
-
             for row in rows:
-                cols = row.find_all('td')
-                v_values = list()
-                for col in cols:
-                    v_values.append(col.text.strip())
-
-                record = dict(zip(k_values, v_values))
+                vals = [col.text.strip() for col in row.find_all('td')]
+                record = dict(zip( IemaLicenseRecordDict.get_fields(), vals))
                 records.append(record)
 
     return records

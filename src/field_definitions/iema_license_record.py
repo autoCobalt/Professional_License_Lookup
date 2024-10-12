@@ -1,4 +1,4 @@
-from typing import Dict, Any
+#custom modules
 from .base_license_record import BaseLicenseRecordDict
 
 class IemaLicenseRecordDict(BaseLicenseRecordDict):

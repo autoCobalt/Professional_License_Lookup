@@ -1,6 +1,3 @@
-#1st party pre-installed python libraries
-from typing import Dict, Any, List
-
 #custom modules
 from .base_license_record import BaseLicenseRecordDict
 

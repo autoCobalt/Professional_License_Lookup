@@ -31,7 +31,6 @@ def main() -> None:
     #lic.description = "pharm"
     #print(lic.description)
     #print(lic["Description"])
-    json.dumps(search_pharm(params), indent=2)
     print("testing end")
 
 if __name__ == '__main__':
