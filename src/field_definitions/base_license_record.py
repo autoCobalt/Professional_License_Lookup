@@ -5,6 +5,8 @@ class BaseLicenseRecordDict(dict, metaclass=prop_generator):
     _FIELDS = []
     _PROPERTY_NAMES = []
     _PROPERTY_FIELD_MAP = None
+    _INPUT_FIELDS = []
+    _INPUT_PROPERTY = []
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -20,7 +22,7 @@ class BaseLicenseRecordDict(dict, metaclass=prop_generator):
     def _initialize_attributes(self):
         for field in self._FIELDS:
             if field not in self:
-                self[field] = None
+                self[field] = None if field != "Submit2" else "Submit"
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name not in self._PROPERTY_FIELD_MAP:
@@ -39,3 +41,12 @@ class BaseLicenseRecordDict(dict, metaclass=prop_generator):
     @classmethod
     def get_empty_dict(cls) -> Dict[str, Any]:
         return {field: None for field in cls._FIELDS}
+    
+    @classmethod
+    def get_input_fields(cls) -> 'BaseLicenseRecordDict':
+        class InputFieldsRecordDict(BaseLicenseRecordDict):
+            _FIELDS = cls._INPUT_FIELDS
+            _PROPERTY_NAMES = cls._INPUT_PROPERTY
+            _INPUT_FIELDS = cls._INPUT_FIELDS
+        
+        return InputFieldsRecordDict()

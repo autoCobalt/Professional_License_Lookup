@@ -2,7 +2,7 @@
 from enum import Enum
 import logging
 import re
-from typing import Optional, List, Dict, Tuple, Union
+from typing import Optional, List, Dict, Union
 
 #3rd party libraries
 from bs4 import BeautifulSoup
@@ -10,33 +10,59 @@ from bs4 import BeautifulSoup
 #custom modules
 from api_methods import get_website
 
-class License_Site(Enum):
-    
-    IEMA:           Tuple[List[str],str, Union[Dict[str, str], None]] = (["IEMA","IEMA-NM","IEMA-RT"],"https://public.iema.state.il.us/iema/radiation/radtech/searchdetail.asp", None)
-    PHARM_RN_SOCIAL:Tuple[List[str],str, Union[Dict[str, str], None]] = (["LSW","LCSW","PHARM","PHARMT"],"https://data.illinois.gov/dataset/professional-licensing", None) # Professional Licensing site has to be dynamically determined: resource_id changes monthly
-    EMT:            Tuple[List[str],str, Union[Dict[str, str], None]] = (["EMT"],"https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx", None) 
+_LICENSE_SITES = {
+    "IEMA": {
+        "license_types": ["IEMA", "IEMA-NM", "IEMA-RT"],
+        "url": "https://public.iema.state.il.us/iema/radiation/radtech/searchdetail.asp",
+        "base_search_url": None,
+        "params": None
+    },
+    "PHARM_RN_SOCIAL": {
+        "license_types": ["LSW", "LCSW", "PHARM", "PHARMT"],
+        "url": "https://data.illinois.gov/dataset/professional-licensing",
+        "base_search_url": "https://data.illinois.gov/api/3/action/datastore_search",
+        "params": None  # Professional Licensing site has to be dynamically determined: resource_id changes monthly
+    },
+    "EMT": {
+        "license_types": ["EMT"],
+        "url": "https://ildohemsv7prod.glsuite.us/glsuiteweb/clients/ildohems/Public/Verification/Search.aspx",
+        "base_search_url": None,
+        "params": None
+    }
+    # Add more license sites here as needed
+}
 
-    def __new__(cls, lic_type: List[str], url: str, params: Union[Dict[str, str], None]):
+
+class License_Site(Enum):
+    IEMA =          _LICENSE_SITES["IEMA"]
+    PHARM_RN_SOCIAL=_LICENSE_SITES["PHARM_RN_SOCIAL"]
+    EMT=            _LICENSE_SITES["EMT"]
+
+    def __new__(cls, details: Dict[str, Union[List[str], str, Optional[Dict[str, str]]]]) -> 'License_Site':
        obj = object.__new__(cls)
-       obj._value_ = (lic_type, url, params)
+       obj._value_ = details
        return obj
 
     @property
     def license_types(self) -> List[str]:
-        return self._value_[0]
+        return self._value_["license_types"]
 
     @property 
     def url(self) -> str:
-        return self._value_[1]
+        return self._value_["url"]
+    
+    @property 
+    def base_search_url(self) -> str:
+        return self._value_["base_search_url"] or self._value_["url"]
 
     @property
     def params(self) -> Dict[str, str]:
-        return self._value_[2] or {}
+        return self._value_["params"] or {}
 
     # called at runtime to determine the resource_id of the professional license database.
     @staticmethod
-    def _get_resource_id(base_url: str) -> Optional[str]:
-        html_content = get_website(License_Site.PHARM_RN_SOCIAL.url)
+    def _get_resource_id(url: str) -> Optional[str]:
+        html_content = get_website(url)
         if not html_content:
             return None
 
@@ -56,4 +82,4 @@ class License_Site(Enum):
         logging.error("All methods failed to extract the resource ID from {url}")
         return None
 
-License_Site.PHARM_RN_SOCIAL._value_ = (License_Site.PHARM_RN_SOCIAL._value_[0], "https://data.illinois.gov/api/3/action/datastore_search", {"resource_id": License_Site._get_resource_id("https://data.illinois.gov/api/3/action/datastore_search")})
+License_Site.PHARM_RN_SOCIAL._value_["params"] = {"resource_id": License_Site._get_resource_id(License_Site.PHARM_RN_SOCIAL.url)}

@@ -21,3 +21,6 @@ class PharmRnSocialRecordDict(BaseLicenseRecordDict):
         "ever_disciplined", "last_modified_date", "case_number", "action",
         "discipline_start_date", "discipline_end_date", "discipline_reason", "rank"
     ]
+    
+    _INPUT_FIELDS   = _FIELDS
+    _INPUT_PROPERTY = _PROPERTY_NAMES

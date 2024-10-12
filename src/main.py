@@ -7,24 +7,28 @@ import json
 
 #custom modules
 from site_search_methods import search_pharm, search_iema
-from field_definitions import PharmRnSocialRecordDict
+from field_definitions import PharmRnSocialRecordDict, IemaLicenseRecordDict
 
 def main() -> None:
     print("testing start")
     
-    params = PharmRnSocialRecordDict()
+    params = PharmRnSocialRecordDict.get_input_fields()
     params.first_name = "Divya"
     params.last_name = "Gandhi"
     params.license_status = "Active"
 
     print(json.dumps(search_pharm(params), indent=2))
     #print(json.dumps(search_iema(first_name="Connie",last_name="Davis"), indent=2))
-    print(json.dumps(search_iema(license_nbr="500491309"), indent=2))
+    iema_lic = IemaLicenseRecordDict.get_input_fields()
+    print(iema_lic)
+    iema_lic.accred = "500521409"
+    print(json.dumps(search_iema(iema_lic), indent=2))
+    print(iema_lic)
+    iema_lic['accred'] = "500479871"
+    print(json.dumps(search_iema(iema_lic), indent=2))
+    print(iema_lic)
     
-    #lic = LicenseRecordDict()
     #print(json.dumps(lic, indent=2))
-    #print(lic.get_empty_dict())
-    #print(lic.get_fields())
     
     
     #lic["Description"] = "pharmzzz"

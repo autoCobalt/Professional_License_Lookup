@@ -9,18 +9,11 @@ from bs4 import BeautifulSoup
 from api_methods import get_website, post_website
 from field_definitions import License_Site as lic, PharmRnSocialRecordDict, IemaLicenseRecordDict
 
-def search_iema(first_name: str = None, last_name: str = None, license_nbr: str = None) -> List[Dict[str, any]]:
-    
-    query_params = {
-        'lastname': last_name if last_name else None,
-        'initial': first_name[0] if first_name else None,
-        'accred': license_nbr if license_nbr else None,
-        'Submit2': 'Submit'
-    }
+def search_iema(params: Dict[str, any]) -> List[Dict[str, any]]:
 
     records = list()
 
-    response = post_website(lic.IEMA.url, query_params)
+    response = post_website(lic.IEMA.base_search_url, params)
     if response and response.status_code == 200:
         table = BeautifulSoup(response.text, 'html.parser').find('table', {'class': 'dropdown'})
 
@@ -41,7 +34,7 @@ def search_pharm(search_params: PharmRnSocialRecordDict) -> List[Dict[str, any]]
     
     records = list()
     
-    response = get_website(lic.PHARM_RN_SOCIAL.url, params)
+    response = get_website(lic.PHARM_RN_SOCIAL.base_search_url, params)
     if response and response.status_code == 200:
         try:
             data = response.json()
