@@ -1,8 +1,8 @@
 from typing import Dict, Any, List
-from ._prop_generator import _prop_generator
+from .prop_generator import prop_generator
 
 
-class LicenseRecordDict(dict, metaclass=_prop_generator):
+class LicenseRecordDict(dict, metaclass=prop_generator):
     _FIELDS = [
         "_id", "License Type", "Description", "License Number", "License Status",
         "Business", "Title", "First Name", "Middle", "Last Name", "Prefix", "Suffix",

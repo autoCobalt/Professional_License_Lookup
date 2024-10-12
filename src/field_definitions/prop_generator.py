@@ -1,4 +1,4 @@
-class _prop_generator(type):
+class prop_generator(type):
     def __new__(cls, name, bases, dct):
         cls = super().__new__(cls, name, bases, dct)
         
