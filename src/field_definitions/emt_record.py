@@ -5,6 +5,7 @@ class EmtLicenseRecordDict(BaseLicenseRecordDict):
     _FIELDS = [
         "Full Name", "License Number", "License Type", "License Status", "Issue Date", "Expiration Date"
     ]
+    DATEFIELDS = ["Issue Date", "Expiration Date"]
     _FIELD_CODES = ["ctl00_MainContent_lblFullName", "ctl00_MainContent_dtgLicenses_ctl02_lblFileNumber", "ctl00_MainContent_dtgLicenses_ctl02_lblObjectTypeID", "ctl00_MainContent_dtgLicenses_ctl02_Label1", "ctl00_MainContent_dtgLicenses_ctl02_Label2", "ctl00_MainContent_dtgLicenses_ctl02_Label3"]
     translate_ouput_field_to_html_name = dict(zip(_FIELDS,_FIELD_CODES))
     translate_html_name_to_output_field = dict(zip(_FIELD_CODES,_FIELDS))

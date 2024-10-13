@@ -10,7 +10,7 @@ import requests
 def filter_params_decorator(func):
     @wraps(func)
     def wrapper(url: str, params: Dict[str, str] = None, *args, **kwargs):
-        filtered_params = {k: v for k, v in params.items() if v} if params else {}
+        filtered_params = {k: v for k, v in params.items() if v or k.startswith("__")} if params else {}
         if filtered_params and 'q' in filtered_params and isinstance(filtered_params['q'], dict):
             filtered_params['q'] = json.dumps({k: v for k, v in filtered_params['q'].items() if v})
         return func(url, filtered_params, *args, **kwargs)

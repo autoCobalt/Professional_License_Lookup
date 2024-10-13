@@ -1,6 +1,7 @@
 #1st party pre-installed python libraries
 import json
 from typing import Dict, List
+from datetime import datetime
 
 #3rd party libaries
 from bs4 import BeautifulSoup
@@ -25,7 +26,7 @@ def search_iema(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
 
     return records
 
-def search_pharm(search_params: PharmRnSocialRecordDict) -> List[Dict[str, any]]:
+def search_pharm(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
     params = {
         **lic.PHARM_RN_SOCIAL.params,
@@ -79,8 +80,10 @@ def search_emt(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
                 record["Full Name"] = result_name
                 td_elements = row.find_all('td')
                 cols = [span for td in td_elements for span in td.find_all('span', id=True)]
+                df = EmtLicenseRecordDict.DATEFIELDS
                 for col in cols:
-                    record[hfo[col.get('id')]] = col.text.strip()
+                    if hfo[col.get('id')] in record:
+                        record[hfo[col.get('id')]] = col.text.strip() if hfo[col.get('id')] not in df else datetime.strptime(col.text.strip(), "%B %d, %Y").strftime("%Y-%m-%d")
                 records.append(record)
 
                     
