@@ -18,6 +18,9 @@ class BaseLicenseRecordDict(dict, metaclass=prop_generator):
     def _initialize_property_field_map(cls):
         cls._PROPERTY_FIELD_MAP = {prop: field for prop, field in zip(cls._PROPERTY_NAMES, cls._FIELDS)}
 
+    @classmethod
+    def get_property_field_map(cls) -> Dict[str, str]:
+        return cls._PROPERTY_FIELD_MAP.copy()
 
     def _initialize_attributes(self):
         for field in self._FIELDS:

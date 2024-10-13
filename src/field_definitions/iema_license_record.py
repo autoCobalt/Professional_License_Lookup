@@ -1,5 +1,4 @@
 #custom modules
-from typing import Any, Dict, override
 from .base_license_record import BaseLicenseRecordDict
 
 class IemaLicenseRecordDict(BaseLicenseRecordDict):
