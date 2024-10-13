@@ -83,7 +83,7 @@ def search_emt(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
                 df = EmtLicenseRecordDict.DATEFIELDS
                 for col in cols:
                     if hfo[col.get('id')] in record:
-                        record[hfo[col.get('id')]] = col.text.strip() if hfo[col.get('id')] not in df else datetime.strptime(col.text.strip(), "%B %d, %Y").strftime("%Y-%m-%d")
+                        record[hfo[col.get('id')]] = col.text.strip() if hfo[col.get('id')] not in df else datetime.strptime(col.text.strip(), "%B %d, %Y").strftime("%m/%d/%Y")
                 records.append(record)
 
                     
