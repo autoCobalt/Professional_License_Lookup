@@ -3,35 +3,54 @@ import logging
 import os
 import tkinter as tk
 from tkinter import filedialog
-from typing import Union
+from typing import Dict, List, Union
 
 # 3rd party libraries
 import pandas as pd
+import openpyxl
+from openpyxl import load_workbook
 
-def __select_file(dir_path: str = None):
-    root = tk.Tk()
-    root.withdraw()
-    file_path = filedialog.askopenfilename(
-        title="Select an Excel/CSV file",
-        filetypes=(("Excel or CSV file", "*.xlsx *.csv"), ("", "")),
-        initialdir=dir_path,
-        multiple=False
-    )
-    return file_path
+def load_emplid_data(file_path: Union[str, None] = None, dir_path: str = os.path.dirname(os.path.realpath(__file__)), sheet_name: str = 'Search_Request', table_name: str = 'emplid_lic_type') -> List[Dict[str, str]]:
+    wb = read_excel_file(filename=file_path,dir_path= dir_path)
 
-def read_excel_file(file_path: Union[str, None] = None, dir_path: str = None) -> pd.DataFrame:
+    #Check if sheet exists
+    if sheet_name not in wb.sheetnames:
+        raise ValueError(f"Sheet '{sheet_name}' not found in Excel file.")
+
+    ws = wb[sheet_name]
+    
+    # Find sheet_name table
+    table = None
+    for tbl in ws.tables.values():
+        if tbl.name == table_name:
+            table = tbl
+            break
+
+    data = ws[table.ref]
+
+    rows = list(data)
+    headers = [cell.value for cell in rows[0]]
+    list_dict = [{headers[i]: str(cell.value) for i, cell in enumerate(row)} for row in rows[1:]]
+    return list_dict
+
+
+
+def read_excel_file(file_path: Union[str, None] = None, dir_path: str = None) -> openpyxl.workbook.Workbook:
     if file_path is None:
         file_path = __select_file(dir_path=dir_path)
     if file_path is None:
         raise ValueError("No file selected.")
     extension_type = os.path.splitext(file_path)[1]
-    # Read the file
-    try:
-        if extension_type == '.xlsx':
-            return pd.read_excel(file_path)
-        elif extension_type == '.csv':
-            return pd.read_csv(file_path)
-        else:
-            raise ValueError(f"File extension type ({extension_type}) is neither xlsx nor csv.")
-    except FileNotFoundError as e:
-        logging.error(f"File not found. {e}")
+
+    return load_workbook(filename=file_path, read_only=True, data_only=True)
+
+def __select_file(dir_path: str = None) -> str:
+    root = tk.Tk()
+    root.withdraw()
+    file_path = filedialog.askopenfilename(
+        title="Select an Excel/CSV file",
+        filetypes=(("Excel file", "*.xlsx"), ("", "")),
+        initialdir=dir_path,
+        multiple=False
+    )
+    return file_path
