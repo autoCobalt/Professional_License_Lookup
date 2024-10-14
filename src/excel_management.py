@@ -26,16 +26,23 @@ def load_emplid_data(file_path: Union[str, None] = None, dir_path: str = os.path
             table = tbl
             break
 
+    if table is None:
+        raise ValueError(f"Table '{table_name}' not found in the Excel file.")
+    
     data = ws[table.ref]
 
     rows = list(data)
     headers = [cell.value for cell in rows[0]]
-    results = [{headers[i]: str(cell.value) for i, cell in enumerate(row) if cell.value} for row in rows[1:] if row[0] and row[1]]
+    results = [
+        {headers[i]: str(cell.value) for i, cell in enumerate(row) if cell.value} 
+        for row in rows[1:] 
+        if any(cell.value for cell in row)
+    ]
     return results
 
 
 
-def read_excel_file(file_path: Union[str, None] = None, dir_path: str = None) -> openpyxl.workbook.Workbook:
+def read_excel_file(file_path: Union[str, None] = None, dir_path: str = os.path.dirname(os.path.realpath(__file__))) -> openpyxl.workbook.Workbook:
     if file_path is None:
         file_path = __select_file(dir_path=dir_path)
     if file_path is None or file_path == '':

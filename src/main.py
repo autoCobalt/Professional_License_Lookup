@@ -23,10 +23,8 @@ def main() -> None:
     #test_idfpr()
     #test_ems()
     #test_iema()
-    print(load_emplid_data())
-
-    
-    
+    search_list = load_emplid_data()
+    print(json.dumps(search_list, indent=2))    
     
     
     
