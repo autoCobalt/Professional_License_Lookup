@@ -22,6 +22,8 @@ def __select_file(dir_path: str = None):
 def read_excel_file(file_path: Union[str, None] = None, dir_path: str = None) -> pd.DataFrame:
     if file_path is None:
         file_path = __select_file(dir_path=dir_path)
+    if file_path is None:
+        raise ValueError("No file selected.")
     extension_type = os.path.splitext(file_path)[1]
     # Read the file
     try:
@@ -30,6 +32,6 @@ def read_excel_file(file_path: Union[str, None] = None, dir_path: str = None) ->
         elif extension_type == '.csv':
             return pd.read_csv(file_path)
         else:
-            raise ValueError("File extension type is neither xlsx nor csv.")
+            raise ValueError(f"File extension type ({extension_type}) is neither xlsx nor csv.")
     except FileNotFoundError as e:
         logging.error(f"File not found. {e}")

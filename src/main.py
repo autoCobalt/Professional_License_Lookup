@@ -50,7 +50,14 @@ def main() -> None:
     #print(lic["Description"])
     
     df = read_excel_file(dir_path=dir_path)
-    print(df)
+    
+    # fill numeric columns with 0, convert to int, replace 0 with empty string, fill all other NaN column values with empty string
+    #numeric_columns = df.select_dtypes(include=['float', 'int']).columns
+    #df[numeric_columns] = df[numeric_columns].fillna(0)
+    #df[numeric_columns] = df[numeric_columns].astype(int)
+    #df[numeric_columns] = df[numeric_columns].replace(0, '')
+    #df = df.fillna('')
+    #print(df)
     
     
     print("testing end")
