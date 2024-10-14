@@ -4,6 +4,9 @@ install_required_libraries({'requests', 'bs4', 'pandas', 'openpyxl','xlsxwriter'
 
 #1st party pre-installed libraries
 import json
+import os
+from typing import Final
+dir_path: Final[str] = os.path.dirname(os.path.realpath(__file__))
 
 #3rd party libraries
 import pandas as pd
@@ -46,8 +49,9 @@ def main() -> None:
     #print(lic.description)
     #print(lic["Description"])
     
-    df = read_excel_file()
+    df = read_excel_file(dir_path=dir_path)
     print(df)
+    
     
     print("testing end")
 
