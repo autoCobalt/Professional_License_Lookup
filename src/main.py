@@ -1,6 +1,6 @@
 #pre-run package installation check
 from package_checker import install_required_libraries
-install_required_libraries({'requests', 'bs4', 'pandas', 'openpyxl','xlsxwriter'})
+install_required_libraries({'requests', 'bs4', 'pandas', 'openpyxl','xlsxwriter', 'oracledb'})
 
 #1st party pre-installed libraries
 import json
@@ -15,6 +15,7 @@ import pandas as pd
 from site_search_methods import search_idfpr, search_iema, search_ems
 from field_definitions import PharmRnSocialRecordDict, IemaLicenseRecordDict, EmtLicenseRecordDict
 from excel_management import load_emplid_data
+from oracle_db_requests import querydb_for_emp_data
 
 def main() -> None:
     print("testing start")
@@ -24,7 +25,9 @@ def main() -> None:
     #test_ems()
     #test_iema()
     search_list = load_emplid_data()
-    print(json.dumps(search_list, indent=2))    
+    print(json.dumps(search_list, indent=2))
+    querydb_for_emp_data(search_list)
+     
     
     
     

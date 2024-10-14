@@ -12,7 +12,7 @@ from
   ps_person_name a
   join ps_personal_data p on a.emplid = p.emplid
 where
-  a.emplid in &emplid_list
+  a.emplid in (&emplid_list)
 order by
   a.emplid
 ;
