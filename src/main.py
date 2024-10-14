@@ -14,7 +14,7 @@ import pandas as pd
 #custom modules
 from site_search_methods import search_idfpr, search_iema, search_ems
 from field_definitions import PharmRnSocialRecordDict, IemaLicenseRecordDict, EmtLicenseRecordDict
-from excel_management import read_excel_file
+from excel_management import load_emplid_data
 
 def main() -> None:
     print("testing start")
@@ -23,7 +23,8 @@ def main() -> None:
     #test_idfpr()
     #test_ems()
     #test_iema()
-    
+    print(load_emplid_data())
+
     
     
     

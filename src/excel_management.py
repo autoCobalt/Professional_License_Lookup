@@ -11,7 +11,7 @@ import openpyxl
 from openpyxl import load_workbook
 
 def load_emplid_data(file_path: Union[str, None] = None, dir_path: str = os.path.dirname(os.path.realpath(__file__)), sheet_name: str = 'Search_Request', table_name: str = 'emplid_lic_type') -> List[Dict[str, str]]:
-    wb = read_excel_file(filename=file_path,dir_path= dir_path)
+    wb = read_excel_file(file_path=file_path,dir_path= dir_path)
 
     #Check if sheet exists
     if sheet_name not in wb.sheetnames:
@@ -30,19 +30,20 @@ def load_emplid_data(file_path: Union[str, None] = None, dir_path: str = os.path
 
     rows = list(data)
     headers = [cell.value for cell in rows[0]]
-    list_dict = [{headers[i]: str(cell.value) for i, cell in enumerate(row)} for row in rows[1:]]
-    return list_dict
+    results = [{headers[i]: str(cell.value) for i, cell in enumerate(row) if cell.value} for row in rows[1:] if row[0] and row[1]]
+    return results
 
 
 
 def read_excel_file(file_path: Union[str, None] = None, dir_path: str = None) -> openpyxl.workbook.Workbook:
     if file_path is None:
         file_path = __select_file(dir_path=dir_path)
-    if file_path is None:
+    if file_path is None or file_path == '':
         raise ValueError("No file selected.")
+
     extension_type = os.path.splitext(file_path)[1]
 
-    return load_workbook(filename=file_path, read_only=True, data_only=True)
+    return load_workbook(filename=file_path, data_only=True)
 
 def __select_file(dir_path: str = None) -> str:
     root = tk.Tk()
