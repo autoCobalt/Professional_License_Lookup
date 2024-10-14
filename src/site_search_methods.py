@@ -8,32 +8,34 @@ from bs4 import BeautifulSoup
 
 #custom modules
 from api_methods import get_website, post_website
-from field_definitions import License_Site as lic, PharmRnSocialRecordDict, IemaLicenseRecordDict, BaseLicenseRecordDict, EmtLicenseRecordDict
+from field_definitions import License_Site as lic, BaseLicenseRecordDict, EmtLicenseRecordDict
 
+#IEMA Nuclear Medicine, Radiographer, Radiation Therapy
 def search_iema(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
 
     response = post_website(lic.IEMA.base_search_url, params)
     if response and response.status_code == 200:
         table = BeautifulSoup(response.text, 'html.parser').find('table', {'class': 'dropdown'})
-
         if table:
             rows = table.find_all('tr')[1:]
+            headers = [col.text.strip() for col in (table.find('tr')).find_all('th')]
             for row in rows:
                 vals = [col.text.strip() for col in row.find_all('td')]
-                record = dict(zip( IemaLicenseRecordDict.get_fields(), vals))
+                record = dict(zip( headers, vals))
                 records.append(record)
 
     return records
 
-def search_pharm(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
+#Pharmacist, Licensed Pharmacy Tech, Social Worker
+def search_idfpr(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
     params = {
-        **lic.PHARM_RN_SOCIAL.params,
+        **lic.IDFPR.params,
         "q": dict(search_params)
     }
     
-    response = get_website(lic.PHARM_RN_SOCIAL.base_search_url, params)
+    response = get_website(lic.IDFPR.base_search_url, params)
     if response and response.status_code == 200:
         try:
             data = response.json()
@@ -46,11 +48,12 @@ def search_pharm(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
 
     return records
 
-def search_emt(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
+#EMT
+def search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
     ifh = EmtLicenseRecordDict.translate_input_field_to_html_name
     
-    response = get_website(lic.EMT.base_search_url)
+    response = get_website(lic.EMS.base_search_url)
     soup = BeautifulSoup(response.text, 'html.parser')
     
     params = { ifh[k] : v for k, v in params.items() if v}
@@ -64,7 +67,7 @@ def search_emt(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     }
     
 
-    response = post_website(lic.EMT.base_search_url, params)
+    response = post_website(lic.EMS.base_search_url, params)
     if response and response.status_code == 200:
         ofh = EmtLicenseRecordDict.translate_ouput_field_to_html_name
         soup = BeautifulSoup(response.text, 'html.parser')

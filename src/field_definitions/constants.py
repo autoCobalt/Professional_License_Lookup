@@ -34,9 +34,9 @@ _LICENSE_SITES = {
 
 
 class License_Site(Enum):
-    IEMA =          _LICENSE_SITES["IEMA"]
-    PHARM_RN_SOCIAL=_LICENSE_SITES["PHARM_RN_SOCIAL"]
-    EMT=            _LICENSE_SITES["EMT"]
+    IEMA  = _LICENSE_SITES["IEMA"]
+    IDFPR = _LICENSE_SITES["PHARM_RN_SOCIAL"]
+    EMS   = _LICENSE_SITES["EMT"]
 
     def __new__(cls, details: Dict[str, Union[List[str], str, Optional[Dict[str, str]]]]) -> 'License_Site':
        obj = object.__new__(cls)
@@ -82,4 +82,4 @@ class License_Site(Enum):
         logging.error("All methods failed to extract the resource ID from {url}")
         return None
 
-License_Site.PHARM_RN_SOCIAL._value_["params"] = {"resource_id": License_Site._get_resource_id(License_Site.PHARM_RN_SOCIAL.url)}
+License_Site.IDFPR._value_["params"] = {"resource_id": License_Site._get_resource_id(License_Site.IDFPR.url)}
