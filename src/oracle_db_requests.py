@@ -9,7 +9,7 @@ import oracledb
 import tkinter as tk
 from tkinter import filedialog
 
-def load_db_config() -> Dict[str, str]:
+def __load_db_config() -> Dict[str, str]:
     root = tk.Tk()
     root.withdraw()
     file_path = filedialog.askopenfilename(
@@ -33,7 +33,7 @@ def load_db_config() -> Dict[str, str]:
     
     return db_config
 
-def load_sql_query(file_path: str) -> str:
+def __load_sql_query(file_path: str) -> str:
     with open(file_path, "r") as sql_file:
         return sql_file.read().strip().rstrip(";")
 
@@ -42,15 +42,13 @@ def querydb_for_emp_data(search_list: List[Dict[str, str]]) -> List[Dict[str, st
     dir_path = os.path.dirname(os.path.realpath(__file__))
     sql_file_path = os.path.join(dir_path, 'resources', 'query_for_emp_info.sql')
     
-    sql_query = load_sql_query(sql_file_path)
+    sql_query = __load_sql_query(sql_file_path)
     
     # Replace the placeholder with the actual emplid_list
     sql_query = sql_query.replace("&emplid_list", ",".join([f"'{record['emplid']}'" for record in search_list]))
     
     # Load the DB configuration
-    db_config = load_db_config()  
-    username = db_config["username"]
-    password = db_config["password"]
+    db_config = __load_db_config()
     hostname = db_config["hostname"]
     port = db_config["port"]
     service_name = db_config["service_name"]
@@ -58,27 +56,23 @@ def querydb_for_emp_data(search_list: List[Dict[str, str]]) -> List[Dict[str, st
 
     ds = f"{hostname}:{port}/{service_name}"
     
-    
-    
     results = []
+
+    cursor = None
     try:
-        with oracledb.connect(user=username, password=password, dsn=ds) as connection:
-            print("Successfully connected to the database")
-          
-            with connection.cursor() as cursor:
-                
-                cursor.execute(sql_query)
-                results = cursor.fetchall()
-                cursor.close()
-                print(f"Query returned {len(results)} rows")
-                print(results)
+        with oracledb.connect(user=db_config['username'], password=db_config['password'], dsn=ds) as connection:
+            cursor = connection.cursor()
+            cursor.execute(sql_query)
+
+            result_column_names = []
+            for h in cursor.description:
+                result_column_names.append(h[0])
+
+            print(result_column_names)
+            for row in cursor:
+                results.append(dict(zip(result_column_names, row)))
+            
+            cursor.close()
     except oracledb.Error as error:
-        if error.code == 1017:
-            print("Error 1017: Please check your credentials.")
-        else:  
-            print(f"Error connecting to the database: {error}")
-    finally:
-        if connection:
-            connection.close()
-        print("Database connection closed")
+        print(f"Error connecting to the database: {error}")
     return results

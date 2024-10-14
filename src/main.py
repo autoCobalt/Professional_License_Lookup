@@ -25,9 +25,9 @@ def main() -> None:
     #test_ems()
     #test_iema()
     search_list = load_emplid_data()
-    print(json.dumps(search_list, indent=2))
-    querydb_for_emp_data(search_list)
-     
+    emp_data = querydb_for_emp_data(search_list)
+    print(json.dumps(emp_data,indent=2))
+    
     
     
     
