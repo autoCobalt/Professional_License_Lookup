@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 
 #custom modules
 from api_methods import get_website, post_website
-from field_definitions import License_Site as lic, BaseLicenseRecordDict, EmtLicenseRecordDict
+from field_definitions import License_Site as lic, BaseLicenseRecordDict, EmtLicenseRecordDict, IemaLicenseRecordDict, PharmRnSocialRecordDict
 
 
 
@@ -50,6 +50,10 @@ def __search_idfpr(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]
 
     return records
 
+
+
+
+
 #EMT
 def __search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
@@ -57,8 +61,8 @@ def __search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     
     response = get_website(lic.EMS.base_search_url)
     soup = BeautifulSoup(response.text, 'html.parser')
-    
-    params = { ifh[k] : v for k, v in params.items() if v}
+
+    params = { ifh[k] : v for k, v in params.items() if v and k in ifh}
     params = {
         **params,
         "__EVENTTARGET"                 : "ctl00$MainContent$btnSearch",
@@ -74,7 +78,11 @@ def __search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
         ofh = EmtLicenseRecordDict.translate_ouput_field_to_html_name
         soup = BeautifulSoup(response.text, 'html.parser')
         
-        result_name = soup.find('span', {'id': ofh['Full Name']}).text.strip()
+        result_name = soup.find('span', {'id': ofh['Full Name']})
+        if not result_name:
+            return records
+        result_name = result_name.text.strip()
+        
         table = BeautifulSoup(response.text, 'html.parser').find('table', {'id': 'ctl00_MainContent_dtgLicenses'})
         
         if table:
@@ -94,8 +102,39 @@ def __search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
                     
     return records
 
+
+def __prepare_iema(emp_rcd: Dict[str, str]) -> Dict[str, any]:
+    iema_record = IemaLicenseRecordDict.get_input_fields()
+    iema_record.lastname = emp_rcd['LAST_NAME_SRCH']
+    iema_record.initial = emp_rcd['FIRST_NAME_SRCH'][0]
+    return __search_iema(iema_record)
+
+def __prepare_ems(emp_rcd: Dict[str, str]) -> Dict[str, any]:
+    ems_record = EmtLicenseRecordDict.get_input_fields()
+    ems_record.first_name = emp_rcd['FIRST_NAME_SRCH']
+    ems_record.last_name = emp_rcd['LAST_NAME_SRCH']
+    ems_record.last_4_ssn = emp_rcd['LAST_4_SSN']
+    return __search_ems(ems_record)
+
+def __prepare_idfpr(emp_rcd: Dict[str, str]) -> Dict[str, any]:
+    idfpr_record = PharmRnSocialRecordDict.get_input_fields()
+    idfpr_record.first_name = emp_rcd['FIRST_NAME_SRCH']
+    idfpr_record.last_name = emp_rcd['LAST_NAME_SRCH']
+    idfpr_record.license_status = 'ACTIVE'
+    idfpr_record.city = emp_rcd['CITY']
+    return __search_idfpr(idfpr_record)
+
+def pull_site_licensing_data(emp_data: List[Dict[str, str]]) -> List[Dict[str, any]]:
+    for emp_record in emp_data:
+        #Convert the record into a proper format to search
+        results = request_methods[emp_record['license_type']](emp_record)
+        print(emp_record)
+        print(results)
+        print('\n')
+
+
 request_methods = {
-    "IDFPR": __search_idfpr,
-    "IEMA": __search_iema,
-    "EMS": __search_ems
+    "IDFPR": __prepare_idfpr,
+    "IEMA": __prepare_iema,
+    "EMS": __prepare_ems
 }

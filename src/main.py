@@ -12,21 +12,25 @@ dir_path: Final[str] = os.path.dirname(os.path.realpath(__file__))
 import pandas as pd
 
 #custom modules
-from site_search_methods import request_methods
+from site_search_methods import request_methods, pull_site_licensing_data
 from field_definitions import PharmRnSocialRecordDict, IemaLicenseRecordDict, EmtLicenseRecordDict
 from excel_management import load_emplid_data
 from oracle_db_requests import querydb_for_emp_data
 
 def main() -> None:
     print("testing start")
+    #test files
+    test_file_path = os.path.join(dir_path, 'resources', '_Test_Ref', 'emplid_license_request.xlsx')
+    db_config_file_path = os.path.join(dir_path, 'resources', '_Test_Ref', 'db_config.json')
 
     
-    test_idfpr()
+    #test_idfpr()
     #test_ems()
     #test_iema()
-    search_list = load_emplid_data()
-    emp_data = querydb_for_emp_data(search_list)
-    print(json.dumps(emp_data,indent=2))
+    
+    search_list = load_emplid_data(file_path=test_file_path)
+    emp_data = querydb_for_emp_data(search_list=search_list, db_config_file_path=db_config_file_path)
+    pull_site_licensing_data(emp_data)
     
     
     
@@ -56,7 +60,7 @@ def test_iema():
     #testing IEMA site search (Nuclear Medicine, Radiographer)
     iema_lic = IemaLicenseRecordDict.get_input_fields()
     iema_lic.accred = "500521409"
-    print(json.dumps(search_iema(iema_lic), indent=2))
+    print(json.dumps(request_methods['IEMA'](iema_lic), indent=2))
     iema_lic['accred'] = "500479871"
     print(json.dumps(request_methods['IEMA'](iema_lic), indent=2))
 
