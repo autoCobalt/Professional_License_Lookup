@@ -27,9 +27,14 @@ def main() -> None:
     #test_idfpr()
     #test_ems()
     #test_iema()
-    
+
+    #load excel file emplid-license_type data
     search_list = load_emplid_data(file_path=test_file_path)
+
+    #query database for emplid fields(name, address, for emt: last_4_ssn)
     emp_data = querydb_for_emp_data(search_list=search_list, db_config_file_path=db_config_file_path)
+
+    #search websites based on license_type
     pull_site_licensing_data(emp_data)
     
     

@@ -29,7 +29,7 @@ def __search_iema(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
 
     return records
 
-#Pharmacist, Licensed Pharmacy Tech, Social Worker
+#IDFPR Pharmacist, Licensed Pharmacy Tech, Social Worker
 def __search_idfpr(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
     params = {
@@ -126,8 +126,9 @@ def __prepare_idfpr(emp_rcd: Dict[str, str]) -> Dict[str, any]:
 
 def pull_site_licensing_data(emp_data: List[Dict[str, str]]) -> List[Dict[str, any]]:
     for emp_record in emp_data:
-        #Convert the record into a proper format to search
+        #run the proper site method based on license_type. Runs the input data prep method first.
         results = request_methods[emp_record['license_type']](emp_record)
+        
         print(emp_record)
         print(results)
         print('\n')
