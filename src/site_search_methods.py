@@ -10,8 +10,10 @@ from bs4 import BeautifulSoup
 from api_methods import get_website, post_website
 from field_definitions import License_Site as lic, BaseLicenseRecordDict, EmtLicenseRecordDict
 
+
+
 #IEMA Nuclear Medicine, Radiographer, Radiation Therapy
-def search_iema(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
+def __search_iema(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
 
     response = post_website(lic.IEMA.base_search_url, params)
@@ -28,7 +30,7 @@ def search_iema(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     return records
 
 #Pharmacist, Licensed Pharmacy Tech, Social Worker
-def search_idfpr(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
+def __search_idfpr(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
     params = {
         **lic.IDFPR.params,
@@ -49,7 +51,7 @@ def search_idfpr(search_params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     return records
 
 #EMT
-def search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
+def __search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
     records = list()
     ifh = EmtLicenseRecordDict.translate_input_field_to_html_name
     
@@ -91,3 +93,9 @@ def search_ems(params: BaseLicenseRecordDict) -> List[Dict[str, any]]:
 
                     
     return records
+
+request_methods = {
+    "IDFPR": __search_idfpr,
+    "IEMA": __search_iema,
+    "EMS": __search_ems
+}
