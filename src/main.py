@@ -20,8 +20,8 @@ from oracle_db_requests import querydb_for_emp_data
 def main() -> None:
     print("testing start")
     #test files
-    test_file_path = os.path.join(dir_path, 'resources', '_Test_Ref', 'emplid_license_request.xlsx')
-    db_config_file_path = os.path.join(dir_path, 'resources', '_Test_Ref', 'db_config.json')
+    test_file_path = os.path.join(dir_path, 'resources', '__Test_Ref', 'emplid_license_request.xlsx')
+    db_config_file_path = os.path.join(dir_path, 'resources', '__Test_Ref', 'db_config.json')
 
     
     #test_idfpr()
