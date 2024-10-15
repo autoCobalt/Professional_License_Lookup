@@ -12,7 +12,7 @@ dir_path: Final[str] = os.path.dirname(os.path.realpath(__file__))
 import pandas as pd
 
 #custom modules
-from site_search_methods import search_idfpr, search_iema, search_ems
+from site_search_methods import request_methods
 from field_definitions import PharmRnSocialRecordDict, IemaLicenseRecordDict, EmtLicenseRecordDict
 from excel_management import load_emplid_data
 from oracle_db_requests import querydb_for_emp_data
@@ -21,7 +21,7 @@ def main() -> None:
     print("testing start")
 
     
-    #test_idfpr()
+    test_idfpr()
     #test_ems()
     #test_iema()
     search_list = load_emplid_data()
@@ -50,7 +50,7 @@ def test_idfpr():
     params.first_name = "Connie"
     params.last_name = "Davis"
     params.license_type = "PHARMACY"
-    print(json.dumps(search_idfpr(params), indent=2))
+    print(json.dumps(request_methods['IDFPR'](params), indent=2))
     
 def test_iema():
     #testing IEMA site search (Nuclear Medicine, Radiographer)
@@ -58,7 +58,7 @@ def test_iema():
     iema_lic.accred = "500521409"
     print(json.dumps(search_iema(iema_lic), indent=2))
     iema_lic['accred'] = "500479871"
-    print(json.dumps(search_iema(iema_lic), indent=2))
+    print(json.dumps(request_methods['IEMA'](iema_lic), indent=2))
 
 def test_ems():
     #testing EMS site search (EMT)
@@ -66,7 +66,7 @@ def test_ems():
     emt_input.first_name = "Grace"
     emt_input.last_name = "Lee"
     emt_input.license_id = "060821907"
-    print(json.dumps(search_ems(emt_input), indent=2))
+    print(json.dumps(request_methods['EMS'](emt_input), indent=2))
 
 if __name__ == '__main__':
     main()
