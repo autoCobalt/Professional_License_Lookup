@@ -39,3 +39,4 @@ __/
 .Trashes
 ehthumbs.db
 Thumbs.db
+src/field_definitions/db_config.json
