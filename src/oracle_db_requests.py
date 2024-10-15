@@ -70,10 +70,12 @@ def querydb_for_emp_data(search_list: List[Dict[str, str]]) -> List[Dict[str, st
             print(result_column_names)
             for row in cursor:
                 emplid = row[0]
-                license_type = next((record['license_type'] for record in search_list if record['emplid'] == emplid), None)
-                result_row = list(row)
-                result_row.insert(1, license_type)
-                results.append(dict(zip(result_column_names, result_row)))
+                licenses_to_find = [emplid_license for emplid_license in search_list if emplid_license['emplid'] == emplid]
+                for license_row in licenses_to_find:
+                    license_type = license_row['license_type']
+                    result_row = list(row)
+                    result_row.insert(1, license_type)
+                    results.append(dict(zip(result_column_names, result_row)))
             
             cursor.close()
     except oracledb.Error as error:
