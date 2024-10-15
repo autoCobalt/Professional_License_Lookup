@@ -64,13 +64,16 @@ def querydb_for_emp_data(search_list: List[Dict[str, str]]) -> List[Dict[str, st
             cursor = connection.cursor()
             cursor.execute(sql_query)
 
-            result_column_names = []
-            for h in cursor.description:
-                result_column_names.append(h[0])
+            result_column_names = [h[0] for h in cursor.description]
+            result_column_names.insert(1, 'license_type')
 
             print(result_column_names)
             for row in cursor:
-                results.append(dict(zip(result_column_names, row)))
+                emplid = row[0]
+                license_type = next((record['license_type'] for record in search_list if record['emplid'] == emplid), None)
+                result_row = list(row)
+                result_row.insert(1, license_type)
+                results.append(dict(zip(result_column_names, result_row)))
             
             cursor.close()
     except oracledb.Error as error:
