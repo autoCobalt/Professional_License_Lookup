@@ -125,13 +125,17 @@ def __prepare_idfpr(emp_rcd: Dict[str, str]) -> Dict[str, any]:
     return __search_idfpr(idfpr_record)
 
 def pull_site_licensing_data(emp_data: List[Dict[str, str]]) -> List[Dict[str, any]]:
+    all_results = list()
     for emp_record in emp_data:
         #run the proper site method based on license_type. Runs the input data prep method first.
         results = request_methods[emp_record['license_type']](emp_record)
         
-        print(emp_record)
-        print(results)
-        print('\n')
+        for result in results:
+            result['license_type'] = emp_record['license_type']
+            
+        all_results.extend(results)
+        
+    return all_results
 
 
 request_methods = {
