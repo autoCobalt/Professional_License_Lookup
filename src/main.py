@@ -6,27 +6,33 @@ install_required_libraries({'requests', 'bs4', 'pandas', 'openpyxl','xlsxwriter'
 import json
 import os
 from typing import Final
+from functools import wraps
 dir_path: Final[str] = os.path.dirname(os.path.realpath(__file__))
 
 #3rd party libraries
-import pandas as pd
 
 #custom modules
-from site_search_methods import request_methods, pull_site_licensing_data
+from site_search_methods import pull_site_licensing_data
 from field_definitions import PharmRnSocialRecordDict, IemaLicenseRecordDict, EmtLicenseRecordDict
 from excel_management import load_emplid_data
 from oracle_db_requests import querydb_for_emp_data
 
-def main() -> None:
-    print("testing start")
-    #test files
-    test_file_path = os.path.join(dir_path, 'resources', '__Test_Ref', 'emplid_license_request.xlsx')
-    db_config_file_path = os.path.join(dir_path, 'resources', '__Test_Ref', 'db_config.json')
+def test_control(test_file_path: str, db_config_file_path: str):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            print("testing start")
+            result = func(test_file_path, db_config_file_path, *args, **kwargs)
+            print("testing end")
+            return result
+        return wrapper
+    return decorator
 
-    
-    #test_idfpr()
-    #test_ems()
-    #test_iema()
+@test_control(
+    test_file_path=os.path.join(dir_path, 'resources', '__Test_Ref', 'emplid_license_request.xlsx'),
+    db_config_file_path=os.path.join(dir_path, 'resources', '__Test_Ref', 'db_config.json')
+)
+def main(test_file_path: str = None, db_config_file_path: str = None) -> None:
 
     #load excel file emplid-license_type data
     search_list = load_emplid_data(file_path=test_file_path)
@@ -35,12 +41,11 @@ def main() -> None:
     emp_data = querydb_for_emp_data(search_list=search_list, db_config_file_path=db_config_file_path)
 
     #search websites based on license_type
-    pull_site_licensing_data(emp_data)
+    pulled_license_data = pull_site_licensing_data(emp_data)
+    
+    print(json.dumps(pulled_license_data, indent=2))
     
     
-    
-    
-    #df = read_excel_file(dir_path=dir_path)
     
     # fill numeric columns with 0, convert to int, replace 0 with empty string, fill all other NaN column values with empty string
     #numeric_columns = df.select_dtypes(include=['float', 'int']).columns
@@ -49,33 +54,6 @@ def main() -> None:
     #df[numeric_columns] = df[numeric_columns].replace(0, '')
     #df = df.fillna('')
     #print(df)
-    
-    
-    print("testing end")
-
-def test_idfpr():
-    #testing IDFPR site search (RN, Physician, Social Worker)
-    params = PharmRnSocialRecordDict.get_input_fields()
-    params.first_name = "Connie"
-    params.last_name = "Davis"
-    params.license_type = "PHARMACY"
-    print(json.dumps(request_methods['IDFPR'](params), indent=2))
-    
-def test_iema():
-    #testing IEMA site search (Nuclear Medicine, Radiographer)
-    iema_lic = IemaLicenseRecordDict.get_input_fields()
-    iema_lic.accred = "500521409"
-    print(json.dumps(request_methods['IEMA'](iema_lic), indent=2))
-    iema_lic['accred'] = "500479871"
-    print(json.dumps(request_methods['IEMA'](iema_lic), indent=2))
-
-def test_ems():
-    #testing EMS site search (EMT)
-    emt_input = EmtLicenseRecordDict.get_input_fields()
-    emt_input.first_name = "Grace"
-    emt_input.last_name = "Lee"
-    emt_input.license_id = "060821907"
-    print(json.dumps(request_methods['EMS'](emt_input), indent=2))
 
 if __name__ == '__main__':
     main()
