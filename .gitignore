@@ -25,7 +25,6 @@
 ######################
 *.log
 *.sqlite
-*.txt
 *.json
 
 # OS generated files #

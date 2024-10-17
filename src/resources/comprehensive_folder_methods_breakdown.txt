@@ -1,0 +1,126 @@
+Professional_License_Lookup/
+├── src/
+│   ├── main.py
+│   │   └── Example Method:
+│   │       def main(test_file_path: str, db_config_file_path: str) -> None:
+│   │           # Show login window to get username and password
+│   │           username, password = show_login_window()
+│   │           # Load excel file emplid-license_type data
+│   │           search_list = load_emplid_data(file_path=test_file_path)
+│   │           # Query database for emplid fields (name, address, for emt: last_4_ssn)
+│   │           emp_data = querydb_for_emp_data(search_list=search_list, db_config_file_path=db_config_file_path)
+│   │           # Search websites based on license_type
+│   │           pull_site_licensing_data(emp_data)
+│   ├── config/
+│   │   └── db_config.json
+│   ├── data/
+│   │   └── emplid_license_request.xlsx
+│   ├── sql/
+│   │   └── query_for_emp_info.sql
+│   ├── logs/
+│   │   └── app.log
+│   ├── temp/
+│   │   └── temp_file.txt
+│   ├── tests/
+│   │   ├── test_db_config.json
+│   │   └── test_emplid_license_request.xlsx
+│   ├── presentation/
+│   │   └── gui/
+│   │       └── login_window.py
+│   │           └── Example Methods:
+│   │               def show_login_window():
+│   │                   def on_submit():
+│   │                       nonlocal username, password
+│   │                       username = entry_username.get()
+│   │                       password = entry_password.get()
+│   │                       if test_connection(username, password):
+│   │                           login_window.destroy()
+│   │                   def on_test_connection():
+│   │                       username = entry_username.get()
+│   │                       password = entry_password.get()
+│   │                       test_connection(username, password)
+│   │                   login_window = ctk.CTk()
+│   │                   login_window.title("Login")
+│   │                   login_window.geometry("400x300")
+│   │                   ctk.CTkLabel(login_window, text="Login", font=("Arial", 24)).pack(pady=20)
+│   │                   ctk.CTkLabel(login_window, text="Username").pack(pady=5)
+│   │                   entry_username = ctk.CTkEntry(login_window)
+│   │                   entry_username.pack(pady=5)
+│   │                   ctk.CTkLabel(login_window, text="Password").pack(pady=5)
+│   │                   entry_password = ctk.CTkEntry(login_window, show="*")
+│   │                   entry_password.pack(pady=5)
+│   │                   ctk.CTkButton(login_window, text="Test Connection", command=on_test_connection).pack(pady=5)
+│   │                   ctk.CTkButton(login_window, text="Submit", command=on_submit).pack(pady=20)
+│   │                   username = None
+│   │                   password = None
+│   │                   login_window.mainloop()
+│   │                   return username, password
+│   ├── business/
+│   │   ├── site_search/
+│   │   │   ├── request_methods.py
+│   │   │   │   └── Example Methods:
+│   │   │   │       def request_iema(emp_record):
+│   │   │   │           # Implement the IEMA request logic here
+│   │   │   │           pass
+│   │   │   │       def request_idfpr(emp_record):
+│   │   │   │           # Implement the IDFPR request logic here
+│   │   │   │           pass
+│   │   │   │       def request_ems(emp_record):
+│   │   │   │           # Implement the EMS request logic here
+│   │   │   │           pass
+│   │   │   └── pull_site_licensing_data.py
+│   │   │       └── Example Method:
+│   │   │           def pull_site_licensing_data(emp_data: List[Dict[str, str]]) -> List[Dict[str, any]]:
+│   │   │               all_results = []
+│   │   │               for emp_record in emp_data:
+│   │   │                   results = request_methods[emp_record['license_type']](emp_record)
+│   │   │                   for result in results:
+│   │   │                       result['license_type'] = emp_record['license_type']
+│   │   │                   all_results.extend(results)
+│   │   │               return all_results
+│   │   └── auth/
+│   │       └── auth_service.py
+│   │           └── Example Method:
+│   │               def authenticate_user(username: str, password: str) -> bool:
+│   │                   # Implement authentication logic here
+│   │                   return True
+│   ├── data_access/
+│   │   ├── db/
+│   │   │   ├── oracle_db_requests.py
+│   │   │   │   └── Example Method:
+│   │   │   │       def querydb_for_emp_data(search_list: List[Dict[str, str]], db_config_file_path: str) -> List[Dict[str, any]]:
+│   │   │   │           # Implement database query logic here
+│   │   │   │           return []
+│   │   │   └── db_config.py
+│   │   │       └── Example Method:
+│   │   │           def load_db_config(config_file_path: str) -> Dict[str, str]:
+│   │   │               with open(config_file_path, 'r') as file:
+│   │   │                   config = json.load(file)
+│   │   │               return config
+│   │   ├── excel/
+│   │   │   └── excel_management.py
+│   │   │       └── Example Method:
+│   │   │           def load_emplid_data(file_path: str) -> List[Dict[str, str]]:
+│   │   │               df = pd.read_excel(file_path)
+│   │   │               return df.to_dict(orient='records')
+│   │   └── repositories/
+│   │       └── emplid_repository.py
+│   │           └── Example Method:
+│   │               def get_emplid_data() -> List[Dict[str, str]]:
+│   │                   # Implement logic to fetch emplid data
+│   │                   return []
+│   └── utils/
+│       ├── package_checker.py
+│       │   └── Example Method:
+│       │       def install_required_libraries(packages: Set[str]) -> None:
+│       │           for package in packages:
+│       │               try:
+│       │                   __import__(package)
+│       │               except ImportError:
+│       │                   subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+│       └── field_definitions.py
+│           └── Example Definitions:
+│               PharmRnSocialRecordDict = Dict[str, str]
+│               IemaLicenseRecordDict = Dict[str, str]
+│               EmtLicenseRecordDict = Dict[str, str]
+└── README.md

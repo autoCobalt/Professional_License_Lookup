@@ -1,0 +1,37 @@
+Professional_License_Lookup/
+├── src/
+│   ├── main.py
+│   ├── config/
+│   │   └── db_config.json
+│   ├── data/
+│   │   └── emplid_license_request.xlsx
+│   ├── sql/
+│   │   └── query_for_emp_info.sql
+│   ├── logs/
+│   │   └── app.log
+│   ├── temp/
+│   │   └── temp_file.txt
+│   ├── tests/
+│   │   ├── test_db_config.json
+│   │   └── test_emplid_license_request.xlsx
+│   ├── presentation/
+│   │   └── gui/
+│   │       └── login_window.py
+│   ├── business/
+│   │   ├── site_search/
+│   │   │   ├── request_methods.py
+│   │   │   └── pull_site_licensing_data.py
+│   │   └── auth/
+│   │       └── auth_service.py
+│   ├── data_access/
+│   │   ├── db/
+│   │   │   ├── oracle_db_requests.py
+│   │   │   └── db_config.py
+│   │   ├── excel/
+│   │   │   └── excel_management.py
+│   │   └── repositories/
+│   │       └── emplid_repository.py
+│   └── utils/
+│       ├── package_checker.py
+│       └── field_definitions.py
+└── README.md
